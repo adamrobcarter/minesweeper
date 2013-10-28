@@ -34,32 +34,24 @@ public class Space {
 	
 	void uncover(){
 		if(!this.open){
-			this.game.p("uncovering");
 			this.open = true;
 			this.game.canvas.repaint();
-			this.game.p("uncovering2");
 			if(this.value == 9){
-				game.lose();
-			}
-			this.game.p("uncovering3");
-			if(this.game.uncoveredRest()){
+				this.game.lose();
+				this.game.p("lost");
+			} else if(this.game.uncoveredRest()){
 				this.game.win();
-			}
-			this.game.p("uncovering4");
-			if(this.value == 0){
+			} else if(this.value == 0){
 				this.uncoverSurrounding();
 			}
-			this.game.p("uncovering5");
 		}
 	}
 	
 	public void uncoverSurrounding(){
 		try {
-			this.game.p("sleeping");
 			this.game.canvas.repaint();
 			this.game.canvas.serviceRepaints();
 			Thread.sleep(7);
-			this.game.p("slept");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +90,6 @@ public class Space {
 	void gohere(){
 		this.hover = true;
 		this.game.selected = this;
-		//Minesweeper.canvas.repaint();
 	}
 	
 	void leavehere(){
