@@ -186,18 +186,7 @@ public class Minesweeper extends MIDlet implements CommandListener {
 
 		Random rand = new Random();
 
-		/*try {
-			for(int r=0; r<Minesweeper.height; r++){
-				for(int c=0; c<Minesweeper.length; c++){
-					if(rand.nextFloat()>0.9){
-						data[r][c] = 1;
-					}
-				}
-			}
-		} catch (Exception e) {
-			error = e.toString();
-		}*/
-		for(int i=0; i<10; i++){
+		for(int i=0; i<12; i++){
 			int c = (int) (rand.nextFloat()*10);
 			int r = (int) (rand.nextFloat()*10);
 			data[c][r] = 1;
