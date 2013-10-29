@@ -13,29 +13,35 @@ public class MCanvas extends Canvas {
 	}
 
 	protected void paint(Graphics g){
-		//Minesweeper.p("repaint");
+		
+		int canvasWidth = this.getWidth();
+		int canvasHeight = this.getHeight();
+		
+		g.setColor(0, 0, 0);
+		g.fillRect(0, 0, canvasWidth, canvasHeight);
+		
+		int gameWidth = this.game.length*14;
+		int gameHeight = this.game.height*14;
 
-		//Space[] data = Minesweeper.topaint;///////////////////////////////////////////////////////
-
-		if(this.game.spaces == null){
-			g.setColor(0, 0, 0);
-			g.drawString("null", 30, 70, Graphics.HCENTER | Graphics.BASELINE);
-		} else {
-			g.setColor(0, 0, 0);
-			g.drawString("non-null", 30, 70, Graphics.HCENTER | Graphics.BASELINE);
-		}
-
-
+		int leftOffset = (canvasWidth-gameWidth)/2;
+		int topOffset = (canvasHeight-gameHeight)/2;
+		
+		g.setColor(50, 50, 50);
+		g.drawRect(leftOffset-1, topOffset-1, gameWidth+1, gameHeight+1);
+		
 		for(int col=0; col<this.game.spaces.length; col++){
 			for(int row=0; row<this.game.spaces[col].length; row++){
 
-				int r = this.game.spaces[col][row].row * 14;
-				int c = this.game.spaces[col][row].col * 14;
+				int c = (this.game.spaces[col][row].col * 14) + leftOffset;
+				int r = (this.game.spaces[col][row].row * 14) + topOffset;
 				int v = this.game.spaces[col][row].value;
 				String s = "";
 				g.setColor(250, 0, 0);
-
-				if(this.game.spaces[col][row].open){
+				
+				if(this.game.spaces[col][row].exploding){
+					g.setColor(255, 255, 255);
+					
+				} else if(this.game.spaces[col][row].open){
 					switch(v){
 					case 0:
 						g.setColor(50, 50, 50);
@@ -73,7 +79,7 @@ public class MCanvas extends Canvas {
 						s = "8";
 						break;
 					case 9:
-						g.setColor(250, 200, 200);
+						g.setColor(255, 255, 255);
 						break;
 					default:
 						g.setColor(250, 100, 100);
@@ -89,38 +95,35 @@ public class MCanvas extends Canvas {
 				g.setColor(250, 250, 250);
 				Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_SMALL);  
 				g.setFont(font);
-				int size = font.getBaselinePosition();
 
 				if(this.game.spaces[col][row].flagged){
 					//g.drawString(">", c+7, r+14, Graphics.HCENTER | Graphics.BASELINE);
 					s = ">";
 				}
-
+				
 				g.drawString(s, c+6, r-3, Graphics.HCENTER | Graphics.TOP);
-
-				if(this.game.spaces[col][row].hover){
+				
+				if(this.game.spaces[col][row].hover && this.game.playing){
 					g.setColor(250, 250, 250);
 					g.drawLine(c, r, c, r+13);
 					g.drawLine(c, r, c+13, r);
 					g.drawLine(c+13, r, c+13, r+13);
 					g.drawLine(c, r+13, c+13, r+13);
 				}
-
-				//Minesweeper.p("here?");
 			}
-
-			if(Minesweeper.error != null){
-				//g.drawString(Minesweeper.error, 50, 50, Graphics.HCENTER | Graphics.BASELINE);
-			}
-			if(this.game.message.length() > 0){
-				this.game.p("msg:"+this.game.message);
-			}
-			g.setColor(0, 0, 0);
-			Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_LARGE);  
-			g.setFont(font);
-			g.drawString(this.game.message, this.getWidth()/2, this.getHeight()-3, Graphics.HCENTER | Graphics.BASELINE);
-
 		}
+
+		if(this.game.error != null){
+			//g.drawString(Minesweeper.error, 50, 50, Graphics.HCENTER | Graphics.BASELINE);
+		}
+		if(this.game.message.length() > 0){
+			this.game.p("msg:"+this.game.message);
+		}
+		g.setColor(255, 255, 255);
+		Font font = Font.getFont(Font.FACE_SYSTEM, Font.STYLE_PLAIN, Font.SIZE_LARGE);  
+		g.setFont(font);
+		g.drawString(this.game.message, this.getWidth()/2, this.getHeight()-3, Graphics.HCENTER | Graphics.BASELINE);
+
 	}
 
 	protected void keyPressed(int keyCode) {
@@ -143,7 +146,7 @@ public class MCanvas extends Canvas {
 		case DOWN:
 			this.game.p("DOWN");
 
-			if(r<Minesweeper.height-1){
+			if(r<this.game.height-1){
 				this.game.selected.leavehere();
 				this.game.getSpace(c, r+1).gohere();
 			}
@@ -159,7 +162,7 @@ public class MCanvas extends Canvas {
 		case RIGHT:
 			this.game.p("RIGHT");
 
-			if(c<Minesweeper.length-1){
+			if(c<this.game.length-1){
 				this.game.selected.leavehere();
 				this.game.getSpace(c+1, r).gohere();
 			}

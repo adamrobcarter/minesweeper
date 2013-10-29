@@ -12,6 +12,7 @@ public class Space {
 	public int row;
 	public boolean flagged = false;
 	public Minesweeper game;
+	public boolean exploding = false;
 	
 	public String toString(){
 		return "c:" + Integer.toString(this.col) + " r:" + Integer.toString(this.row) + " v:" + Integer.toString(this.value);
@@ -33,7 +34,7 @@ public class Space {
 	}
 	
 	void uncover(){
-		if(!this.open){
+		if((!this.open) && this.game.playing){
 			this.open = true;
 			this.game.canvas.repaint();
 			if(this.value == 9){
@@ -45,6 +46,17 @@ public class Space {
 				this.uncoverSurrounding();
 			}
 		}
+	}
+	
+	public void explode(){
+		this.exploding = true;
+		if(this.value == 9){
+			this.open = true;
+		}
+	}
+	
+	public void stopExplode(){
+		this.exploding = false;
 	}
 	
 	public void uncoverSurrounding(){
